@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { MatInputModule } from '@angular/material/input'
 import { MatCardModule } from '@angular/material/card'
 import { MatIconModule } from '@angular/material/icon'
@@ -10,19 +11,21 @@ import { Cliente } from '../cadastro/cliente';
 
 @Component({
   selector: 'app-consulta',
-  imports: [MatInputModule, MatCardModule, MatIconModule, MatTableModule, FormsModule, MatButton],
+  imports: [MatInputModule, MatCardModule, CommonModule, MatIconModule, MatTableModule, FormsModule, MatButton],
   templateUrl: './consulta.component.html',
   styleUrl: './consulta.component.scss'
 })
 export class ConsultaComponent implements OnInit{
 
-  listaClientes: Cliente[] = []
+  listaClientes: Cliente[] = [];
+  colunasTable: string[] = ["id", "nome", "cpf", "dataNascimento", "email"];
 
   constructor(private service: ClienteService) {
 
   }
   ngOnInit() {
-    this.listaClientes = this.service.pesquisarClientes('')
+   this.listaClientes = this.service.pesquisarClientes('');
+  console.log(this.listaClientes);
   }
 
 }
