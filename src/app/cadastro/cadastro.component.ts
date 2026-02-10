@@ -9,10 +9,12 @@ import { MatButtonModule } from '@angular/material/button'
 import { Cliente } from './cliente';
 import { ClienteService } from '../cliente.service'
 import { ActivatedRoute, Route, Router } from '@angular/router';
+import { NgxMaskDirective, provideNgxMask } from 'ngx-mask'
 
 @Component({
   selector: 'app-cadastro',
-  imports: [FlexLayoutModule, MatIconModule, MatButtonModule, MatCardModule, FormsModule, MatFormFieldModule, MatInputModule],
+  imports: [FlexLayoutModule, MatIconModule, NgxMaskDirective, MatButtonModule, MatCardModule, FormsModule, MatFormFieldModule, MatInputModule],
+  providers: [provideNgxMask()],
   templateUrl: './cadastro.component.html',
   styleUrl: './cadastro.component.scss'
 })
@@ -47,13 +49,13 @@ export class CadastroComponent implements OnInit {
   }
 
   salvar() {
-    if(!this.atualizando) {
+    if (!this.atualizando) {
 
       this.service.salvar(this.cliente)
       this.cliente = Cliente.newCliente();
-   } else {
-    this.service.atualizar(this.cliente)
-    this.router.navigate(['./consulta'])
-   }
+    } else {
+      this.service.atualizar(this.cliente)
+      this.router.navigate(['./consulta'])
+    }
   }
 }
