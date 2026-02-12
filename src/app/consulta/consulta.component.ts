@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatInputModule } from '@angular/material/input'
 import { MatCardModule } from '@angular/material/card'
 import { MatIconModule } from '@angular/material/icon'
 import { MatTableModule } from '@angular/material/table'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { FormsModule } from '@angular/forms'
 import { MatButton } from "@angular/material/button";
 import { ClienteService } from '../cliente.service';
@@ -14,14 +15,14 @@ import { Router } from '@angular/router';
   selector: 'app-consulta',
   imports: [MatInputModule, MatCardModule, CommonModule, MatIconModule, MatTableModule, FormsModule, MatButton],
   templateUrl: './consulta.component.html',
-  styleUrl: './consulta.component.scss'
+  styleUrl: './consulta.component.scss',
 })
 export class ConsultaComponent implements OnInit {
 
   nomeBusca: string = '';
   listaClientes: Cliente[] = [];
   colunasTable: string[] = ["id", "nome", "cpf", "dataNascimento", "email", "acoes"];
-
+  snack: MatSnackBar = inject(MatSnackBar);
   constructor(private service: ClienteService, private router: Router) {
 
   }
@@ -35,12 +36,13 @@ export class ConsultaComponent implements OnInit {
   preparaEditar(id: string) {
     this.router.navigate(['/cadastro'], { queryParams: { "id": id } })
   }
-  preparaDeletar(cliente : Cliente) {
+  preparaDeletar(cliente: Cliente) {
     cliente.deletando = true;
   }
   deletar(cliente: Cliente) {
     this.service.deletar(cliente);
     this.listaClientes = this.service.pesquisarClientes('');
+    this.snack.open("Item deletado com sucesso!", "Ok")
   }
 }
 
