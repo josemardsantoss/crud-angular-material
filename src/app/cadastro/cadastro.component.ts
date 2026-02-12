@@ -11,10 +11,12 @@ import { MatSnackBar } from '@angular/material/snack-bar'
 import { ClienteService } from '../cliente.service'
 import { ActivatedRoute, Route, Router } from '@angular/router';
 import { NgxMaskDirective, provideNgxMask } from 'ngx-mask'
-
+import { BrasilapiService } from '../brasilapi.service';
+import { Estado, Municipio } from '../brasilapi.models';
+import { MatSelectModule } from '@angular/material/select';
 @Component({
   selector: 'app-cadastro',
-  imports: [FlexLayoutModule, MatIconModule, NgxMaskDirective, MatButtonModule, MatCardModule, FormsModule, MatFormFieldModule, MatInputModule],
+  imports: [FlexLayoutModule, MatIconModule, NgxMaskDirective, MatSelectModule, MatButtonModule, MatCardModule, FormsModule, MatFormFieldModule, MatInputModule],
   providers: [provideNgxMask()],
   templateUrl: './cadastro.component.html',
   styleUrl: './cadastro.component.scss'
@@ -24,11 +26,14 @@ export class CadastroComponent implements OnInit {
 
   cliente: Cliente = Cliente.newCliente();
   atualizando: boolean = false;
-  snack: MatSnackBar = inject(MatSnackBar)
+  snack: MatSnackBar = inject(MatSnackBar);
+  estados: Estado[] = [];
+  municipio: Municipio[] = [];
 
   constructor(private service: ClienteService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private brasilapiSerivce: BrasilapiService,
   ) {
 
   }
@@ -48,8 +53,16 @@ export class CadastroComponent implements OnInit {
           Cliente.newCliente();
       }
     });
+    this.carregarUFS();
   }
 
+  carregarUFS() {
+    //observable
+    this.brasilapiSerivce.listarUfs().subscribe({
+      next: listaEstados => this.estados = listaEstados,
+      error: erro => console.log("Ocrreu um erro", erro)
+    })
+  }
   salvar() {
     if (!this.atualizando) {
 
