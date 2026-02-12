@@ -13,10 +13,12 @@ import { ActivatedRoute, Route, Router } from '@angular/router';
 import { NgxMaskDirective, provideNgxMask } from 'ngx-mask'
 import { BrasilapiService } from '../brasilapi.service';
 import { Estado, Municipio } from '../brasilapi.models';
-import { MatSelectModule } from '@angular/material/select';
+import { MatSelectChange, MatSelectModule } from '@angular/material/select';
+import { CommonModule } from "@angular/common";
+
 @Component({
   selector: 'app-cadastro',
-  imports: [FlexLayoutModule, MatIconModule, NgxMaskDirective, MatSelectModule, MatButtonModule, MatCardModule, FormsModule, MatFormFieldModule, MatInputModule],
+  imports: [FlexLayoutModule, MatIconModule, CommonModule, NgxMaskDirective, MatSelectModule, MatButtonModule, MatCardModule, FormsModule, MatFormFieldModule, MatInputModule, CommonModule],
   providers: [provideNgxMask()],
   templateUrl: './cadastro.component.html',
   styleUrl: './cadastro.component.scss'
@@ -28,7 +30,7 @@ export class CadastroComponent implements OnInit {
   atualizando: boolean = false;
   snack: MatSnackBar = inject(MatSnackBar);
   estados: Estado[] = [];
-  municipio: Municipio[] = [];
+  municipios: Municipio[] = [];
 
   constructor(private service: ClienteService,
     private route: ActivatedRoute,
@@ -47,6 +49,10 @@ export class CadastroComponent implements OnInit {
         if (clienteEncontrado) {
           this.atualizando = true;
           this.cliente = clienteEncontrado
+          if (this.cliente.uf) {
+            const event = { value: this.cliente.uf }
+            this.carregarMunicipios(event as MatSelectChange)
+          }
         }
         this.atualizando = true;
         this.cliente = this.service.buscarClientePorId(id) ||
@@ -62,6 +68,13 @@ export class CadastroComponent implements OnInit {
       next: listaEstados => this.estados = listaEstados,
       error: erro => console.log("Ocrreu um erro", erro)
     })
+  }
+  carregarMunicipios(event: MatSelectChange) {
+    const ufSelecionada = event.value;
+    this.brasilapiSerivce.listarMunicipios(ufSelecionada).subscribe({
+      next: listaMunicipios => this.municipios = listaMunicipios,
+      error: erro => console.log("Ocorreu um erro", erro)
+    });
   }
   salvar() {
     if (!this.atualizando) {
